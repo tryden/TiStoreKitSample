@@ -1,16 +1,10 @@
 (function() {
   var StoreKit, activity, productIds, products, table, updateTable, win;
   StoreKit = require('jp.masuidrive.ti.storekit');
-  productIds = ["co.saiten.tistorekitsample.product1", "co.saiten.tistorekitsample.product2", "co.saiten.tistorekitsample.product3"];
   products = [];
-  updateTable = function(_products) {
+  productIds = ["co.saiten.tistorekitsample.product1", "co.saiten.tistorekitsample.product2", "co.saiten.tistorekitsample.product3"];
+  updateTable = function() {
     var count, data, product;
-    if (_products == null) {
-      _products = null;
-    }
-    if (_products != null) {
-      products = _products;
-    }
     data = (function() {
       var _i, _len, _results;
       _results = [];
@@ -47,7 +41,8 @@
       activity.show();
       return StoreKit.findProducts(productIds, function(_products, invalid) {
         activity.hide();
-        return updateTable(_products);
+        products = _products;
+        return updateTable();
       });
     }
   });
@@ -67,8 +62,7 @@
     Ti.API.log("purchased");
     activity.hide();
     productId = e.transaction.payment.product;
-    count = Ti.App.Properties.getInt(productId, 0);
-    count += 1;
+    count = Ti.App.Properties.getInt(productId, 0) + 1;
     Ti.App.Properties.setInt(productId, count);
     updateTable();
     return StoreKit.defaultPaymentQueue.finishTransaction(e.transaction);

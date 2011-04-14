@@ -1,15 +1,13 @@
 StoreKit = require('jp.masuidrive.ti.storekit')
 
+products = []
 productIds = [
   "co.saiten.tistorekitsample.product1"
   "co.saiten.tistorekitsample.product2"
   "co.saiten.tistorekitsample.product3"
 ]
 
-products = []
-
-updateTable = (_products = null) ->
-  products = _products if _products?
+updateTable = () ->
   data = for product in products
     count = Ti.App.Properties.getInt(product.id, 0)
     title: "#{product.title} (#{product.price}) : #{count}"
@@ -34,7 +32,8 @@ win.addEventListener 'open', ->
     activity.show()
     StoreKit.findProducts productIds, (_products, invalid) ->
       activity.hide()
-      updateTable(_products)
+      products = _products
+      updateTable()
 
 table.addEventListener 'click', (e) ->
   payment = StoreKit.createPayment()
@@ -52,11 +51,8 @@ StoreKit.defaultPaymentQueue.addEventListener 'purchased', (e) ->
   activity.hide()
 
   productId = e.transaction.payment.product
-
-  count = Ti.App.Properties.getInt(productId, 0)
-  count += 1
+  count = Ti.App.Properties.getInt(productId, 0) + 1
   Ti.App.Properties.setInt(productId, count)
-
   updateTable()
 
   StoreKit.defaultPaymentQueue.finishTransaction(e.transaction)
