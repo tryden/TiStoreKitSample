@@ -6,11 +6,11 @@ productIds = [
   "co.saiten.tistorekitsample.product3"
 ]
 
-@products = []
+products = []
 
 updateTable = (_products = null) ->
-  @products = _products if _products?
-  data = for product in @products
+  products = _products if _products?
+  data = for product in products
     count = Ti.App.Properties.getInt(product.id, 0)
     title: "#{product.title} (#{product.price}) : #{count}"
     productId: product.id
